@@ -45,6 +45,15 @@ $(ass_hex): $(ass_src)
 
 ass: $(ass_hex)
 
+axi:
+	iverilog -o sim/axi_wrapper_tb.vvp tb/axi4_lite/wrapper/axi_wrapper_tb.v
+	vvp sim/axi_wrapper_tb.vvp -o sim/axi_wrapper_tb.vcd
+	gtkwave -f sim/axi_wrapper_tb.vcd
+
+interconnect:
+	iverilog -o sim/axi4_lite_interconnect_tb.vvp tb/axi4_lite/axi4_lite_interconnect_tb.v
+	vvp sim/axi4_lite_interconnect_tb.vvp -o sim/axi4_lite_interconnect_tb.vcd
+
 all:
 	iverilog -o $(simulation_tb_vvp) $(dir_tb)/$(top_level_tb).v
 	vvp $(simulation_tb_vvp) -o $(simulation_tb_vcd)

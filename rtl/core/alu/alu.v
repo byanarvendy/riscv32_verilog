@@ -18,15 +18,19 @@ module alu (
     output  [31:0]  BR_B, BR_J, BR_I,
 
     /* register */
-    output  [4:0]   RD, RS1, RS2,
+    output  [4:0]   RD, RS1, RS2, oRD_RAM,
 
     /* ram */
     output          RAM_CE_I, RAM_RD_I, RAM_WR_I,
     output          RAM_CE_S, RAM_RD_S, RAM_WR_S,
-    output  [7:0]   RAM_ADDR_I, RAM_ADDR_S,
+    output          RAM_DONE,
+    output  [31:0]  oALU_RAM_DATA,
+    output  [31:0]  RAM_ADDR_I, RAM_ADDR_S, RAM_ADDR_S_RAM,
     output  [31:0]  RAM_DATA_WR_I, RAM_DATA_WR_S, oRAM_DATA,
     input   [31:0]  RAM_DATA_RD_I, RAM_DATA_RD_S
 );
+
+    wire            RAM_DONE;
 
     wire    [4:0]   RD, RS1, RS2;                           /* register file */
     wire    [31:0]  ALU_IN1, ALU_IN2, ALU_OUT;
@@ -38,10 +42,10 @@ module alu (
     wire    [31:0]  ALU_IN1_S, ALU_IN2_S, ALU_OUT_S;
     wire    [4:0]   RS1_B, RS2_B;                           /* instruction b */
     wire    [31:0]  ALU_IN1_B, ALU_IN2_B;
-    wire    [4:0]   iRD_U, RD_J;                            /* instruction u & j*/
+    wire    [4:0]   RD_U, RD_J;                             /* instruction u & j*/
     wire    [31:0]  ALU_OUT_U, ALU_OUT_J;
 
-    instruction_mux u1 (
+    instruction_mux i_mux (
         .OPCODE(OPCODE),
 
         .iRD_R(RD_R), .iRD_I(RD_I), .iRD_S(RD_S),
@@ -68,7 +72,7 @@ module alu (
         .oALU_OUT(ALU_OUT)
     );
 
-    instruction_r u2 (
+    instruction_r i_r (
         .iCLK(iCLK), .iIR(IR),
 
         .iALU_IN1(ALU_IN1_R), .iALU_IN2(ALU_IN2_R),
@@ -76,34 +80,34 @@ module alu (
         .oALU_OUT(ALU_OUT_R)
     );
 
-    instruction_i u3 (
-        .iCLK(iCLK), .iIR(IR),
+    instruction_i i_i (
+        .iCLK(iCLK), .iRST(iRST), .iIR(IR),
 
         .oRAM_CE(RAM_CE_I), .oRAM_RD(RAM_RD_I), .oRAM_WR(RAM_WR_I), 
         .oRAM_ADDR(RAM_ADDR_I), .iRAM_DATA(RAM_DATA_RD_I),
 
         .iREG_OUT1(ALU_IN1_I), .iREG_OUT2(ALU_IN2_I),
-        .oRD(RD_I), .oRS1(RS1_I), .oRS2(RS2_I),
+        .oRD(RD_I), .oRD_RAM(oRD_RAM), .oRS1(RS1_I), .oRS2(RS2_I),
 
-        .oREG_IN(ALU_OUT_I),
+        .oREG_IN(ALU_OUT_I), .RAM_DONE(RAM_DONE), .oALU_RAM_DATA(oALU_RAM_DATA),
 
         .iPC(PC), .oPC(BR_I)
     );
 
-    instruction_s u4 (
-        .iCLK(iCLK), .iIR(IR),
+    instruction_s i_s (
+        .iCLK(iCLK), .iRST(iRST), .iIR(IR),
 
         .iREG_OUT1(ALU_IN1_S), .iREG_OUT2(ALU_IN2_S),
         .oRD(RD_S), .oRS1(RS1_S), .oRS2(RS2_S),
         .oREG_IN(ALU_OUT_S),
 
         .oRAM_CE(RAM_CE_S), .oRAM_RD(RAM_RD_S), .oRAM_WR(RAM_WR_S), 
-        .oRAM_ADDR(RAM_ADDR_S), .iRAM_DATA(RAM_DATA_RD_S),
+        .oRAM_ADDR(RAM_ADDR_S), .oRAM_ADDR_RAM(RAM_ADDR_S_RAM), .iRAM_DATA(RAM_DATA_RD_S),
 
-        .oRAM_DATA(oRAM_DATA)
+        .oRAM_DATA(RAM_DATA_WR_S)
     );
 
-    instruction_b u5 (
+    instruction_b i_b (
         .iCLK(iCLK), .iIR(IR), .iPC(PC),
 
         .iREG_OUT1(ALU_IN1_B), .iREG_OUT2(ALU_IN2_B),
@@ -111,14 +115,14 @@ module alu (
         .oPCBR(BR_B)
     );
 
-    instruction_u u7 (
+    instruction_u i_u (
         .iCLK(iCLK), .iIR(IR),
         .iPC(PC),
     
         .oRD(RD_U), .oREG_IN(ALU_OUT_U)
     );
 
-    instruction_j u8 (
+    instruction_j i_j (
         .iCLK(iCLK), .iIR(IR),
         .iPC(PC),
     

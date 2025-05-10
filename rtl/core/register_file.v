@@ -1,12 +1,9 @@
 module register_file (
-    input           iCLK,
-    input           iRST,
-    input   [4:0]   iRD,
-    input   [4:0]   iRS1,
-    input   [4:0]   iRS2,
-    output  [31:0]  oALU_IN1,
-    output  [31:0]  oALU_IN2,
-    input   [31:0]  iALU_OUT
+    input           iCLK, iRST,
+    input           iROM_VALID, iRAM_READ, iRAM_DONE,
+    input   [4:0]   iRD, iRD_RAM, iRS1, iRS2,
+    input   [31:0]  iALU_OUT, iALU_RAM_DATA,
+    output  [31:0]  oALU_IN1, oALU_IN2
 );
 
     integer i;
@@ -22,20 +19,34 @@ module register_file (
         end
     end
 
-    always @(posedge iCLK) begin
-        if (iRST) begin
+    always @(posedge iCLK or negedge iRST) begin
+        if (!iRST) begin
             for (i = 0; i < 32; i = i + 1) begin
-                regfile[i] = 32'b0;
+                regfile[i] = i;
             end
-        end else if (iRD != 5'b00000) begin
-            regfile[iRD] = iALU_OUT;
+            
+            $display("\n === INITIAL REGISTER VALUE === ");
+            for (i = 0; i < 32; i = i + 8) begin
+                $display("#REG: [0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x]", regfile[i+0], regfile[i+1], regfile[i+2], regfile[i+3], regfile[i+4], regfile[i+5], regfile[i+6], regfile[i+7]);
+            end
         end
 
-        $display("#REGISTERS:");
-        for (i = 0; i < 32; i = i + 8) begin
-            $display("#REG: [0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x]", regfile[i+0], regfile[i+1], regfile[i+2], regfile[i+3], regfile[i+4], regfile[i+5], regfile[i+6], regfile[i+7]);
-        end
+        if ((iROM_VALID && !iRAM_READ) || iRAM_DONE) begin
+            if (!iRAM_READ && iRD != 5'b00000) begin
+                regfile[iRD] = iALU_OUT;
+            end 
+            else if (iRAM_DONE && iRD_RAM != 5'b00000) begin
+                regfile[iRD_RAM] = iALU_RAM_DATA;
+            end
 
+            #1; 
+                $display("#REGISTERS:");
+                for (i = 0; i < 32; i = i + 8) begin
+                    $display("#REG: [0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x]", regfile[i+0], regfile[i+1], regfile[i+2], regfile[i+3], regfile[i+4], regfile[i+5], regfile[i+6], regfile[i+7]);
+                end
+
+        end
+       
     end
 
 endmodule

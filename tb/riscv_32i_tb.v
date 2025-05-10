@@ -30,7 +30,7 @@ module riscv_32i_tb;
         iRAM_RD = 1;
         iRAM_WR = 0;
 
-		for (i = 0; i < 51; i = i +1 ) begin
+		for (i = 0; i < 10; i = i +1 ) begin
             #5 iCLK = 0;
             #5 iCLK = 1;
 		end
@@ -44,11 +44,7 @@ module riscv_32i_tb;
 
         .oRAM_CE(oRAM_CE), .oRAM_RD(oRAM_RD), .oRAM_WR(oRAM_WR),
         .iRAM_DATA(iRAM_DATA), .oRAM_ADDR(oRAM_ADDR), 
-        .oRAM_DATA(oRAM_DATA),
-
-        .iMODE(iMODE), .iSW(iSW),
-
-        .oREG32(oREG32)
+        .oRAM_DATA(oRAM_DATA)
     );
 
     memory_rom u2 (

@@ -1,0 +1,51 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Sat Mar 29 10:58:13 2025
+[*]
+[dumpfile] "/home/byanarvendy/Downloads/skripsi/ver/riscv_axi/sim/axi_wrapper_tb.vcd"
+[dumpfile_mtime] "Sat Mar 29 10:55:31 2025"
+[dumpfile_size] 45872
+[savefile] "/home/byanarvendy/Downloads/skripsi/ver/riscv_axi/sim/axi_wrapper.gtkw"
+[timestart] 0
+[size] 1920 1016
+[pos] -51 -51
+*-5.000000 10 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 233
+[signals_width] 160
+[sst_expanded] 1
+[sst_vpaned_height] 280
+@28
+axi_wrapper_tb.iCLK
+axi_wrapper_tb.iRST
+@200
+-READ
+@22
+axi_wrapper_tb.ARADDR[31:0]
+@28
+axi_wrapper_tb.ARVALID
+axi_wrapper_tb.ARREADY
+axi_wrapper_tb.RREADY
+@22
+axi_wrapper_tb.RDATA[31:0]
+@28
+axi_wrapper_tb.RVALID
+@200
+-WRITE
+@22
+axi_wrapper_tb.AWADDR[31:0]
+@28
+axi_wrapper_tb.AWVALID
+axi_wrapper_tb.AWREADY
+@22
+axi_wrapper_tb.WDATA[31:0]
+@28
+axi_wrapper_tb.WVALID
+@22
+axi_wrapper_tb.WSTRB[3:0]
+@28
+axi_wrapper_tb.WREADY
+axi_wrapper_tb.BRESP[1:0]
+axi_wrapper_tb.BVALID
+axi_wrapper_tb.BREADY
+[pattern_trace] 1
+[pattern_trace] 0
